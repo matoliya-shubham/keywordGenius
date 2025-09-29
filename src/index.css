@@ -1,6 +1,14 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+:root {
+  --header-height: 64px;
+  --footer-height: 36px;
+  --main-height: calc(100vh - var(--header-height) - var(--footer-height));
+  --logo-primary-color: #3bb1a4;
+  --logo-secondary-color: #1e3a8a;
+}
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {

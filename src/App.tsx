@@ -1,5 +1,16 @@
+import { RouterProvider } from "@tanstack/react-router";
+import { router } from "./lib/tanstack-touter";
+import { QueryClientProvider } from "@tanstack/react-query";
+import { queryClient } from "./lib/tanstack-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+
 function App() {
-  return <h1>PURETECHAISUITE</h1>;
+  return (
+    <QueryClientProvider client={queryClient}>
+      <RouterProvider router={router} />
+      <ReactQueryDevtools initialIsOpen={false} />
+    </QueryClientProvider>
+  );
 }
 
 export default App;
