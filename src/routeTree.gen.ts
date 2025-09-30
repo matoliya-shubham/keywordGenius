@@ -9,38 +9,132 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as SeoRouteImport } from './routes/seo'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ProfileIndexRouteImport } from './routes/profile/index'
+import { Route as SeoResearchRouteImport } from './routes/seo/research'
+import { Route as SeoProgressRouteImport } from './routes/seo/progress'
+import { Route as ProfileEditRouteImport } from './routes/profile/edit'
 
+const SettingsRoute = SettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SeoRoute = SeoRouteImport.update({
+  id: '/seo',
+  path: '/seo',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ProfileIndexRoute = ProfileIndexRouteImport.update({
+  id: '/profile/',
+  path: '/profile/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SeoResearchRoute = SeoResearchRouteImport.update({
+  id: '/research',
+  path: '/research',
+  getParentRoute: () => SeoRoute,
+} as any)
+const SeoProgressRoute = SeoProgressRouteImport.update({
+  id: '/progress',
+  path: '/progress',
+  getParentRoute: () => SeoRoute,
+} as any)
+const ProfileEditRoute = ProfileEditRouteImport.update({
+  id: '/profile/edit',
+  path: '/profile/edit',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/seo': typeof SeoRouteWithChildren
+  '/settings': typeof SettingsRoute
+  '/profile/edit': typeof ProfileEditRoute
+  '/seo/progress': typeof SeoProgressRoute
+  '/seo/research': typeof SeoResearchRoute
+  '/profile': typeof ProfileIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/seo': typeof SeoRouteWithChildren
+  '/settings': typeof SettingsRoute
+  '/profile/edit': typeof ProfileEditRoute
+  '/seo/progress': typeof SeoProgressRoute
+  '/seo/research': typeof SeoResearchRoute
+  '/profile': typeof ProfileIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/seo': typeof SeoRouteWithChildren
+  '/settings': typeof SettingsRoute
+  '/profile/edit': typeof ProfileEditRoute
+  '/seo/progress': typeof SeoProgressRoute
+  '/seo/research': typeof SeoResearchRoute
+  '/profile/': typeof ProfileIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/seo'
+    | '/settings'
+    | '/profile/edit'
+    | '/seo/progress'
+    | '/seo/research'
+    | '/profile'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/seo'
+    | '/settings'
+    | '/profile/edit'
+    | '/seo/progress'
+    | '/seo/research'
+    | '/profile'
+  id:
+    | '__root__'
+    | '/'
+    | '/seo'
+    | '/settings'
+    | '/profile/edit'
+    | '/seo/progress'
+    | '/seo/research'
+    | '/profile/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  SeoRoute: typeof SeoRouteWithChildren
+  SettingsRoute: typeof SettingsRoute
+  ProfileEditRoute: typeof ProfileEditRoute
+  ProfileIndexRoute: typeof ProfileIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/settings': {
+      id: '/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/seo': {
+      id: '/seo'
+      path: '/seo'
+      fullPath: '/seo'
+      preLoaderRoute: typeof SeoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,11 +142,55 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/profile/': {
+      id: '/profile/'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof ProfileIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/seo/research': {
+      id: '/seo/research'
+      path: '/research'
+      fullPath: '/seo/research'
+      preLoaderRoute: typeof SeoResearchRouteImport
+      parentRoute: typeof SeoRoute
+    }
+    '/seo/progress': {
+      id: '/seo/progress'
+      path: '/progress'
+      fullPath: '/seo/progress'
+      preLoaderRoute: typeof SeoProgressRouteImport
+      parentRoute: typeof SeoRoute
+    }
+    '/profile/edit': {
+      id: '/profile/edit'
+      path: '/profile/edit'
+      fullPath: '/profile/edit'
+      preLoaderRoute: typeof ProfileEditRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
+interface SeoRouteChildren {
+  SeoProgressRoute: typeof SeoProgressRoute
+  SeoResearchRoute: typeof SeoResearchRoute
+}
+
+const SeoRouteChildren: SeoRouteChildren = {
+  SeoProgressRoute: SeoProgressRoute,
+  SeoResearchRoute: SeoResearchRoute,
+}
+
+const SeoRouteWithChildren = SeoRoute._addFileChildren(SeoRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  SeoRoute: SeoRouteWithChildren,
+  SettingsRoute: SettingsRoute,
+  ProfileEditRoute: ProfileEditRoute,
+  ProfileIndexRoute: ProfileIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

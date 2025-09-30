@@ -45,6 +45,7 @@ function RouteComponent() {
       console.error(err);
     }
   };
+
   return (
     <div className="min-h-[var(--main-height)] flex items-center justify-center bg-gray-50">
       <Card className="sm:w-full w-sm max-w-md shadow-lg">
