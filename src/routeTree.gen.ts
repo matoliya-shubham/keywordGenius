@@ -9,14 +9,20 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as UsersRouteImport } from './routes/users'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as SeoRouteImport } from './routes/seo'
+import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as ProfileIndexRouteImport } from './routes/profile/index'
 import { Route as SeoResearchRouteImport } from './routes/seo/research'
 import { Route as SeoProgressRouteImport } from './routes/seo/progress'
 import { Route as ProfileEditRouteImport } from './routes/profile/edit'
 
+const UsersRoute = UsersRouteImport.update({
+  id: '/users',
+  path: '/users',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SettingsRoute = SettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
@@ -27,14 +33,14 @@ const SeoRoute = SeoRouteImport.update({
   path: '/seo',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ProfileRoute = ProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ProfileIndexRoute = ProfileIndexRouteImport.update({
-  id: '/profile/',
-  path: '/profile/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SeoResearchRoute = SeoResearchRouteImport.update({
@@ -48,79 +54,92 @@ const SeoProgressRoute = SeoProgressRouteImport.update({
   getParentRoute: () => SeoRoute,
 } as any)
 const ProfileEditRoute = ProfileEditRouteImport.update({
-  id: '/profile/edit',
-  path: '/profile/edit',
-  getParentRoute: () => rootRouteImport,
+  id: '/edit',
+  path: '/edit',
+  getParentRoute: () => ProfileRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/profile': typeof ProfileRouteWithChildren
   '/seo': typeof SeoRouteWithChildren
   '/settings': typeof SettingsRoute
+  '/users': typeof UsersRoute
   '/profile/edit': typeof ProfileEditRoute
   '/seo/progress': typeof SeoProgressRoute
   '/seo/research': typeof SeoResearchRoute
-  '/profile': typeof ProfileIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/profile': typeof ProfileRouteWithChildren
   '/seo': typeof SeoRouteWithChildren
   '/settings': typeof SettingsRoute
+  '/users': typeof UsersRoute
   '/profile/edit': typeof ProfileEditRoute
   '/seo/progress': typeof SeoProgressRoute
   '/seo/research': typeof SeoResearchRoute
-  '/profile': typeof ProfileIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/profile': typeof ProfileRouteWithChildren
   '/seo': typeof SeoRouteWithChildren
   '/settings': typeof SettingsRoute
+  '/users': typeof UsersRoute
   '/profile/edit': typeof ProfileEditRoute
   '/seo/progress': typeof SeoProgressRoute
   '/seo/research': typeof SeoResearchRoute
-  '/profile/': typeof ProfileIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/profile'
     | '/seo'
     | '/settings'
+    | '/users'
     | '/profile/edit'
     | '/seo/progress'
     | '/seo/research'
-    | '/profile'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/profile'
     | '/seo'
     | '/settings'
+    | '/users'
     | '/profile/edit'
     | '/seo/progress'
     | '/seo/research'
-    | '/profile'
   id:
     | '__root__'
     | '/'
+    | '/profile'
     | '/seo'
     | '/settings'
+    | '/users'
     | '/profile/edit'
     | '/seo/progress'
     | '/seo/research'
-    | '/profile/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ProfileRoute: typeof ProfileRouteWithChildren
   SeoRoute: typeof SeoRouteWithChildren
   SettingsRoute: typeof SettingsRoute
-  ProfileEditRoute: typeof ProfileEditRoute
-  ProfileIndexRoute: typeof ProfileIndexRoute
+  UsersRoute: typeof UsersRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/users': {
+      id: '/users'
+      path: '/users'
+      fullPath: '/users'
+      preLoaderRoute: typeof UsersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/settings': {
       id: '/settings'
       path: '/settings'
@@ -135,18 +154,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SeoRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/profile': {
+      id: '/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof ProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/profile/': {
-      id: '/profile/'
-      path: '/profile'
-      fullPath: '/profile'
-      preLoaderRoute: typeof ProfileIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/seo/research': {
@@ -165,13 +184,24 @@ declare module '@tanstack/react-router' {
     }
     '/profile/edit': {
       id: '/profile/edit'
-      path: '/profile/edit'
+      path: '/edit'
       fullPath: '/profile/edit'
       preLoaderRoute: typeof ProfileEditRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof ProfileRoute
     }
   }
 }
+
+interface ProfileRouteChildren {
+  ProfileEditRoute: typeof ProfileEditRoute
+}
+
+const ProfileRouteChildren: ProfileRouteChildren = {
+  ProfileEditRoute: ProfileEditRoute,
+}
+
+const ProfileRouteWithChildren =
+  ProfileRoute._addFileChildren(ProfileRouteChildren)
 
 interface SeoRouteChildren {
   SeoProgressRoute: typeof SeoProgressRoute
@@ -187,10 +217,10 @@ const SeoRouteWithChildren = SeoRoute._addFileChildren(SeoRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ProfileRoute: ProfileRouteWithChildren,
   SeoRoute: SeoRouteWithChildren,
   SettingsRoute: SettingsRoute,
-  ProfileEditRoute: ProfileEditRoute,
-  ProfileIndexRoute: ProfileIndexRoute,
+  UsersRoute: UsersRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

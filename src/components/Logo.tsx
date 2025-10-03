@@ -1,9 +1,11 @@
-export default function Logo() {
+import { Link } from "@tanstack/react-router";
+import PureTechLogo from "@/assets/puretech-logo.svg?react";
+import { cn } from "@/lib/utils";
+
+export default function Logo({ className }: { className?: string }) {
   return (
-    <div className="flex-shrink-0 flex items-center justify-center text-2xl font-medium gap-1">
-      <span className="text-[var(--logo-secondary-color)]">PURETECH</span>
-      <span className="text-[var(--logo-primary-color)]">AI</span>
-      <span className="text-[var(--logo-primary-color)]">SUITE</span>
-    </div>
+    <Link to="/" className="flex items-center ">
+      <PureTechLogo className={cn("size-24", className)} />
+    </Link>
   );
 }

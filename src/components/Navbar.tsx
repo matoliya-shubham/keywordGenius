@@ -1,27 +1,28 @@
 import { useState } from "react";
 import { Menu, X, Settings, User } from "lucide-react";
 import Logo from "./Logo";
+import { Link } from "@tanstack/react-router";
+import { ProfileDropdown } from "./ProfileDropdown";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
     <header
-      className={`w-full md:h-[var(--header-height)] bg-white shadow-sm  relative`}
+      className={`w-full md:h-[var(--header-height)] py-1 bg-white shadow-sm  relative`}
     >
-      <nav className="max-w-8xl mx-auto px-4">
-        <div className="flex items-center justify-between h-16">
+      <nav className="max-w-8xl mx-auto px-4 ">
+        <div className="flex items-center justify-between">
           {/* Logo */}
           <Logo />
-
           {/* Desktop Menu */}
           <div className="hidden md:flex items-center gap-6">
             <button className="p-2 hover:bg-gray-100 rounded-full">
-              <Settings size={22} />
+              <Link to="/users">
+                <Settings size={22} />
+              </Link>
             </button>
-            <button className="p-2 hover:bg-gray-100 rounded-full">
-              <User size={22} />
-            </button>
+            <ProfileDropdown />
           </div>
 
           {/* Mobile Hamburger */}

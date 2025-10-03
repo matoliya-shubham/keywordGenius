@@ -7,7 +7,7 @@ import {
   FormMessage,
   FormControl,
 } from "@/components/ui/form";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -29,7 +29,7 @@ type FormValues = z.infer<typeof formSchema>;
 
 function RouteComponent() {
   const [isPending] = useState(false);
-
+  const navigate = useNavigate();
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -41,6 +41,7 @@ function RouteComponent() {
   const onSubmit = async () => {
     try {
       // TODO: Implement sign in logic
+      navigate({ to: "/seo/research" });
     } catch (err) {
       console.error(err);
     }
@@ -50,9 +51,9 @@ function RouteComponent() {
     <div className="min-h-[var(--main-height)] flex items-center justify-center bg-gray-50">
       <Card className="sm:w-full w-sm max-w-md shadow-lg">
         <CardHeader>
-          <Link to={"/"}>
-            <Logo />
-          </Link>
+          <div className="w-full flex justify-center items-center">
+            <Logo className="size-20" />
+          </div>
           <CardTitle className="text-2xl mt-2 text-center">Sign In</CardTitle>
         </CardHeader>
         <CardContent>
@@ -97,7 +98,7 @@ function RouteComponent() {
               />
               <Button
                 type="submit"
-                className="w-full bg-[var(--logo-primary-color)] hover:bg-[var(--logo-secondary-color)] text-white"
+                className="w-full text-white cursor-pointer hover:opacity-80"
                 disabled={isPending}
               >
                 {isPending ? "Signing in..." : "Sign In"}

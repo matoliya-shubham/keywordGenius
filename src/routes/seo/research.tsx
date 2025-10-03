@@ -209,7 +209,7 @@ function RouteComponent() {
           />
           <Button
             type="submit"
-            className="w-xs my-8 text-md bg-blue-500 hover:cursor-pointer hover:bg-blue-600 text-white"
+            className="w-xs my-8 text-md cursor-pointer text-white"
           >
             Start Research
           </Button>
