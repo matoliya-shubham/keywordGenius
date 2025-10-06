@@ -4,8 +4,8 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "../ui/dialog";
-import { Button } from "../ui/button";
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import {
   Form,
@@ -14,15 +14,19 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "../ui/form";
-import { Input } from "../ui/input";
+} from "@/components/ui/form";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { Role } from "@/constants/constant";
 
 const schema = z.object({
   name: z.string().min(3, "Name must be at least 3 characters"),
   email: z.email({ error: "Invalid email" }),
+  role: z.enum([Role.ADMIN, Role.USER]),
 });
 
 export default function AddUserDialog() {
@@ -31,6 +35,7 @@ export default function AddUserDialog() {
     defaultValues: {
       name: "",
       email: "",
+      role: Role.USER,
     },
   });
 
@@ -56,7 +61,9 @@ export default function AddUserDialog() {
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Name</FormLabel>
+                  <FormLabel className="text-md text-gray-600">
+                    Name <span>*</span>
+                  </FormLabel>
                   <FormControl>
                     <Input type="text" placeholder="John Doe" {...field} />
                   </FormControl>
@@ -69,7 +76,9 @@ export default function AddUserDialog() {
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email</FormLabel>
+                  <FormLabel className="text-md text-gray-600">
+                    Email <span>*</span>
+                  </FormLabel>
                   <FormControl>
                     <Input
                       type="email"
@@ -81,9 +90,39 @@ export default function AddUserDialog() {
                 </FormItem>
               )}
             />
+            <FormField
+              control={form.control}
+              name="role"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-md text-gray-600">
+                    Select Role <span>*</span>
+                  </FormLabel>
+                  <FormControl>
+                    <RadioGroup
+                      defaultValue={Role.USER}
+                      className="flex items-center space-x-2"
+                      onValueChange={(value) => {
+                        field.onChange(value);
+                      }}
+                    >
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value={Role.USER} id="option-user" />
+                        <Label htmlFor="option-user">User</Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value={Role.ADMIN} id="option-admin" />
+                        <Label htmlFor="option-admin">Admin</Label>
+                      </div>
+                    </RadioGroup>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <Button
               type="submit"
-              className="w-full bg-[var(--logo-primary-color)] hover:bg-[var(--logo-secondary-color)] text-white"
+              className="w-full mt-4 hover:opacity-80 cursor-pointer text-white"
             >
               Invite
             </Button>

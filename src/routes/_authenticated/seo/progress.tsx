@@ -1,13 +1,7 @@
 import { JobConfigDialog } from "@/components/dialogs/JobConfigDialog";
 import { StatusBadge, type Status } from "@/components/StatusBadge";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+
 import {
   Table,
   TableBody,
@@ -18,9 +12,9 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { createFileRoute } from "@tanstack/react-router";
-import { Download, Eye } from "lucide-react";
+import { Download } from "lucide-react";
 
-export const Route = createFileRoute("/seo/progress")({
+export const Route = createFileRoute("/_authenticated/seo/progress")({
   component: RouteComponent,
 });
 
@@ -77,11 +71,11 @@ function RouteComponent() {
           <TableBody>
             {progress.map((prog) => (
               <TableRow key={prog.jobId}>
-                <TableCell className="font-medium w-24">
+                <TableCell className="font-normal w-24">
                   <div className="w-full ml-4">{prog.jobId}</div>
                 </TableCell>
-                <TableCell className="font-medium w-40">
-                  {prog.createdAt}
+                <TableCell className="font-normal w-40">
+                  {new Date(prog.createdAt).toLocaleString()}
                 </TableCell>
                 <TableCell className="w-40">
                   <StatusBadge status={prog.status as Status} />
@@ -89,7 +83,6 @@ function RouteComponent() {
                 <TableCell>
                   <div className="flex gap-2 items-center">
                     <JobConfigDialog />
-
                     {prog.availableToDownload && (
                       <Button
                         variant="outline"

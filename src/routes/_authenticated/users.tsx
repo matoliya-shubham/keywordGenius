@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { MoveLeft, Plus, Trash2 } from "lucide-react";
+import { MoveLeft, Trash2 } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import {
   Table,
@@ -10,20 +10,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { StatusBadge, type Status } from "@/components/StatusBadge";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
 import AddUserDialog from "@/components/dialogs/AddUserDialog";
+import { Badge } from "@/components/ui/badge";
 
-export const Route = createFileRoute("/users")({
+export const Route = createFileRoute("/_authenticated/users")({
   component: RouteComponent,
 });
 

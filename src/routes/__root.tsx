@@ -1,9 +1,12 @@
-import { Outlet, createRootRoute } from "@tanstack/react-router";
+import { Outlet, createRootRouteWithContext } from "@tanstack/react-router";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import React from "react";
+import type { AuthContextType } from "@/lib/tanstack-router";
 
-export const Route = createRootRoute({
+export const Route = createRootRouteWithContext<{
+  auth: AuthContextType;
+}>()({
   component: RootComponent,
 });
 

@@ -1,8 +1,9 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import userAvatar from "@/assets/user.png";
 
-export const Route = createFileRoute("/profile")({
+export const Route = createFileRoute("/_authenticated/profile/")({
   component: RouteComponent,
 });
 
@@ -10,7 +11,7 @@ function RouteComponent() {
   const user = {
     name: "John Doe",
     email: "john.doe@example.com",
-    avatar: "https://i.pravatar.cc/150?img=3", // dummy profile picture
+    avatar: userAvatar, // dummy profile picture
   };
 
   const handleLogout = () => {
@@ -18,10 +19,6 @@ function RouteComponent() {
     // TODO: add logout logic
   };
 
-  const handleEdit = () => {
-    console.log("Editing profile...");
-    // TODO: add edit profile logic
-  };
   return (
     <div className="h-full max-h-[var(--main-height)] overflow-y-auto ">
       <h1 className="text-4xl font-bold text-center py-4">Profile</h1>
@@ -38,8 +35,8 @@ function RouteComponent() {
           </CardHeader>
 
           <CardContent className="flex justify-center gap-4 mt-6">
-            <Button variant="outline" onClick={handleEdit}>
-              Edit Profile
+            <Button variant="outline" asChild>
+              <Link to="/profile/edit">Edit Profile</Link>
             </Button>
             <Button variant="destructive" onClick={handleLogout}>
               Logout

@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import Logo from "@/components/Logo";
+import { useSignIn } from "@/hooks/useAuth";
 
 export const Route = createFileRoute("/")({
   component: RouteComponent,
@@ -29,6 +30,7 @@ type FormValues = z.infer<typeof formSchema>;
 
 function RouteComponent() {
   const [isPending] = useState(false);
+  const signIn = useSignIn();
   const navigate = useNavigate();
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -38,9 +40,13 @@ function RouteComponent() {
     },
   });
 
-  const onSubmit = async () => {
+  const onSubmit = async (data: FormValues) => {
     try {
-      // TODO: Implement sign in logic
+      console.log("data: ", data);
+      signIn.mutate({
+        email: data.email,
+        password: data.password,
+      });
       navigate({ to: "/seo/research" });
     } catch (err) {
       console.error(err);

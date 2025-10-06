@@ -5,7 +5,7 @@ export type Status = "in-progress" | "success" | "failed" | "";
 
 interface StatusBadgeProps {
   status: Status;
-  value: string;
+  value?: string;
 }
 
 export function StatusBadge({ status, value }: StatusBadgeProps) {

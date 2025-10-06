@@ -6,9 +6,11 @@ import { Button } from "./ui/button";
 type DropzoneProps = {
   value?: File[];
   onChange: (files: File[]) => void;
+  icon?: React.ReactNode;
+  placeholder?: string;
 };
 
-export function Dropzone({ value, onChange }: DropzoneProps) {
+export function Dropzone({ value, onChange, icon, placeholder }: DropzoneProps) {
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     multiple: false,
     onDrop: (acceptedFiles) => onChange(acceptedFiles),
@@ -27,9 +29,9 @@ export function Dropzone({ value, onChange }: DropzoneProps) {
         <p className="text-sm text-gray-700">{value[0].name}</p>
       ) : (
         <div className="flex flex-col gap-3 items-center justify-center">
-          <FileText className="text-gray-500" size={24} />
+          {icon}
           <p className="text-sm text-gray-500">
-            Upload PDF, DOC, TXT,or CSV file
+            {placeholder}
           </p>
           <Button variant="outline">Choose File</Button>
         </div>

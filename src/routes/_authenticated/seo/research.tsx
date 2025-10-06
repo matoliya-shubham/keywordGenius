@@ -10,47 +10,30 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
+import { ResearchPurpose } from "@/constants/constant";
+import { researchSchema, type FormValues } from "@/schema/researchSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createFileRoute } from "@tanstack/react-router";
+import { FileText, Upload } from "lucide-react";
 import { useForm } from "react-hook-form";
-import z from "zod";
 
-export const Route = createFileRoute("/seo/research")({
+export const Route = createFileRoute("/_authenticated/seo/research")({
   component: RouteComponent,
 });
 
-const formSchema = z.object({
-  brandName: z.string(),
-  targetLocation: z.string().array().min(1),
-  brandURL: z.url(),
-  description: z.string(),
-  questionnaire: z
-    .custom<File[]>()
-    .refine((files) => files && files.length > 0, "File is required"),
-  purpose: z.enum(["SEO", "SEM"]),
-  competitor: z.string().optional(),
-});
-
-type FormValues = z.infer<typeof formSchema>;
-
 function RouteComponent() {
   const form = useForm<FormValues>({
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(researchSchema),
     defaultValues: {
       brandName: "",
       targetLocation: [],
       brandURL: "",
       description: "",
       questionnaire: [],
-      purpose: undefined,
+      purpose: ResearchPurpose.SEO,
       competitor: "",
     },
   });
@@ -62,7 +45,8 @@ function RouteComponent() {
       console.error(err);
     }
   };
-
+  const selectedPurpose = form.watch("purpose");
+  console.log("selectedPurpose", selectedPurpose);
   return (
     <div>
       <h2 className="text-2xl font-semibold text-gray-800 p-4 px-6">
@@ -73,6 +57,42 @@ function RouteComponent() {
           onSubmit={form.handleSubmit(onSubmit)}
           className="space-y-6 p-4 px-6"
         >
+          <FormField
+            control={form.control}
+            name="purpose"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-md text-gray-600">
+                  Select purpose (SEO/SEM) <span>*</span>
+                </FormLabel>
+                <FormControl>
+                  <RadioGroup
+                    defaultValue={ResearchPurpose.SEO}
+                    className="flex items-center space-x-2"
+                    onValueChange={(value) => {
+                      field.onChange(value);
+                    }}
+                  >
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem
+                        value={ResearchPurpose.SEO}
+                        id="option-seo"
+                      />
+                      <Label htmlFor="option-seo">SEO</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem
+                        value={ResearchPurpose.SEM}
+                        id="option-sem"
+                      />
+                      <Label htmlFor="option-sem">SEM</Label>
+                    </div>
+                  </RadioGroup>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
           <FormField
             control={form.control}
             name="brandName"
@@ -154,35 +174,82 @@ function RouteComponent() {
                   Brand Response to Questionnaire <span>*</span>
                 </FormLabel>
                 <FormControl>
-                  <Dropzone value={field.value} onChange={field.onChange} />
+                  <Dropzone
+                    value={field.value}
+                    onChange={field.onChange}
+                    icon={<FileText />}
+                    placeholder="Upload PDF, DOC, TXT,or CSV file"
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-          <FormField
-            control={form.control}
-            name="purpose"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-md text-gray-600">
-                  Select purpose (SEO/SEM) <span>*</span>
-                </FormLabel>
-                <FormControl>
-                  <Select {...field}>
-                    <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Select Research purpose" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="SEO">SEO</SelectItem>
-                      <SelectItem value="SEM">SEM</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
+          <div className="grid grid-cols-2 gap-3">
+            <FormField
+              control={form.control}
+              name="seedKeywords"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-md text-gray-600">
+                    Seed Keywords <span>*</span>
+                  </FormLabel>
+                  <FormControl>
+                    <Dropzone
+                      value={field.value}
+                      onChange={field.onChange}
+                      icon={<Upload />}
+                      placeholder="Upload CSV, DOC, or TXT file"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            {selectedPurpose === ResearchPurpose.SEO ? (
+              <FormField
+                control={form.control}
+                name="seoThemes"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-md text-gray-600">
+                      SEO Themes <span>*</span>
+                    </FormLabel>
+                    <FormControl>
+                      <Dropzone
+                        value={field.value}
+                        onChange={field.onChange}
+                        icon={<Upload />}
+                        placeholder="Upload CSV, DOC, or TXT file"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            ) : (
+              <FormField
+                control={form.control}
+                name="existingKeywords"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-md text-gray-600">
+                      Existing Keywords (optional)
+                    </FormLabel>
+                    <FormControl>
+                      <Dropzone
+                        value={field.value}
+                        onChange={field.onChange}
+                        icon={<Upload />}
+                        placeholder="Upload CSV, DOC, or TXT file"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             )}
-          />
+          </div>
           <FormField
             control={form.control}
             name="competitor"
