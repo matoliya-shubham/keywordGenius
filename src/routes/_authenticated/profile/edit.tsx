@@ -19,29 +19,32 @@ export const Route = createFileRoute("/_authenticated/profile/edit")({
 });
 
 const userSchema = z.object({
-  name: z.string().min(1, "Name is required"),
-  email: z.email({ error: "Invalid email" }),
-  password: z.string().min(6, "Password must be at least 6 characters"),
+  full_name: z.string().min(1, "Name is required"),
+  email: z.string().email("Invalid email"),
+  password: z.string().min(8, "Password must be at least 8 characters long"),
   avatar: z.url({ error: "Invalid avatar URL" }).optional(),
 });
 
 type FormValues = z.infer<typeof userSchema>;
 
 function RouteComponent() {
+  // const { mutate: updateProfile, isPending } = useUpdateProfile();
+  const isPending = false;
   const navigate = useNavigate();
   const form = useForm<FormValues>({
     resolver: zodResolver(userSchema),
     defaultValues: {
-      name: "",
+      full_name: "",
       email: "",
       password: "",
       avatar: undefined,
     },
   });
 
-  const onSubmit = async () => {
+  const onSubmit = (data: FormValues) => {
     try {
-      // TODO: Implement sign in logic
+      console.log(data);
+      // updateProfile(data);
       navigate({ to: "/profile" });
     } catch (err) {
       console.error(err);
@@ -60,10 +63,10 @@ function RouteComponent() {
               >
                 <FormField
                   control={form.control}
-                  name="name"
+                  name="full_name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-gray-500">
+                      <FormLabel className="text-gray-600">
                         Name <span>*</span>
                       </FormLabel>
                       <FormControl>
@@ -78,7 +81,7 @@ function RouteComponent() {
                   name="email"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-gray-500">
+                      <FormLabel className="text-gray-600">
                         Email <span>*</span>
                       </FormLabel>
                       <FormControl>
@@ -98,7 +101,7 @@ function RouteComponent() {
                   name="password"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-gray-500">
+                      <FormLabel className="text-gray-600">
                         Password <span>*</span>
                       </FormLabel>
                       <FormControl>
@@ -117,7 +120,7 @@ function RouteComponent() {
                   name="avatar"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Avatar</FormLabel>
+                      <FormLabel className="text-gray-600">Avatar</FormLabel>
                       <FormControl>
                         <Input type="url" placeholder="Avatar URL" {...field} />
                       </FormControl>
@@ -134,10 +137,11 @@ function RouteComponent() {
                     <Link to="/profile"> Cancel </Link>
                   </Button>
                   <Button
+                    disabled={isPending}
                     type="submit"
                     className=" text-white cursor-pointer hover:opacity-80"
                   >
-                    Update
+                    {isPending ? "Updating..." : "Update"}
                   </Button>
                 </div>
               </form>

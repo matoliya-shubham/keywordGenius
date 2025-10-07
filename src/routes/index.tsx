@@ -16,6 +16,7 @@ import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import Logo from "@/components/Logo";
 import { useSignIn } from "@/hooks/useAuth";
+import { useCurrentUser } from "@/hooks/useAuth";
 
 export const Route = createFileRoute("/")({
   component: RouteComponent,
@@ -32,6 +33,12 @@ function RouteComponent() {
   const [isPending] = useState(false);
   const signIn = useSignIn();
   const navigate = useNavigate();
+  const { isAuthenticated } = useCurrentUser();
+
+  if (isAuthenticated) {
+    navigate({ to: "/seo/research" });
+  }
+
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -42,7 +49,6 @@ function RouteComponent() {
 
   const onSubmit = async (data: FormValues) => {
     try {
-      console.log("data: ", data);
       signIn.mutate({
         email: data.email,
         password: data.password,

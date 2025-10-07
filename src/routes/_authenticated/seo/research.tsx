@@ -1,3 +1,8 @@
+import {
+  CompetitorSelector,
+  type Competitor,
+} from "@/components/CompetitorSelector";
+import { CountrySelector } from "@/components/CountrySelector";
 import { Dropzone } from "@/components/Dropzone";
 import { Button } from "@/components/ui/button";
 import {
@@ -34,7 +39,7 @@ function RouteComponent() {
       description: "",
       questionnaire: [],
       purpose: ResearchPurpose.SEO,
-      competitor: "",
+      competitor: undefined,
     },
   });
 
@@ -45,8 +50,9 @@ function RouteComponent() {
       console.error(err);
     }
   };
+
   const selectedPurpose = form.watch("purpose");
-  console.log("selectedPurpose", selectedPurpose);
+
   return (
     <div>
       <h2 className="text-2xl font-semibold text-gray-800 p-4 px-6">
@@ -118,9 +124,9 @@ function RouteComponent() {
                   Target Location <span>*</span>
                 </FormLabel>
                 <FormControl>
-                  <Input
-                    placeholder="eg: United States, Canada, United Kingdom"
-                    {...field}
+                  <CountrySelector
+                    value={field.value}
+                    onChange={(value) => field.onChange(value)}
                   />
                 </FormControl>
                 <FormMessage />
@@ -259,9 +265,9 @@ function RouteComponent() {
                   Competitors (optional)
                 </FormLabel>
                 <FormControl>
-                  <Textarea
-                    placeholder="List your main competitors..."
-                    {...field}
+                  <CompetitorSelector
+                    onChange={field.onChange}
+                    value={field.value as Competitor[]}
                   />
                 </FormControl>
                 <FormMessage />

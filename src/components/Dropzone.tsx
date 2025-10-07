@@ -1,6 +1,5 @@
 import { useDropzone } from "react-dropzone";
 import { cn } from "@/lib/utils";
-import { FileText } from "lucide-react";
 import { Button } from "./ui/button";
 
 type DropzoneProps = {
@@ -10,7 +9,12 @@ type DropzoneProps = {
   placeholder?: string;
 };
 
-export function Dropzone({ value, onChange, icon, placeholder }: DropzoneProps) {
+export function Dropzone({
+  value,
+  onChange,
+  icon,
+  placeholder,
+}: DropzoneProps) {
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     multiple: false,
     onDrop: (acceptedFiles) => onChange(acceptedFiles),
@@ -30,9 +34,7 @@ export function Dropzone({ value, onChange, icon, placeholder }: DropzoneProps) 
       ) : (
         <div className="flex flex-col gap-3 items-center justify-center">
           {icon}
-          <p className="text-sm text-gray-500">
-            {placeholder}
-          </p>
+          <p className="text-sm text-gray-500">{placeholder}</p>
           <Button variant="outline">Choose File</Button>
         </div>
       )}

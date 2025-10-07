@@ -26,9 +26,9 @@ export function JobConfigDialog({
   open,
   onOpenChange,
 }: {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  data: JobDetails;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  data?: JobDetails;
 }) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

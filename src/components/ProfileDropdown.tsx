@@ -6,11 +6,15 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { LogOut, User } from "lucide-react";
 import { Link } from "@tanstack/react-router";
+import { useProfile } from "@/hooks/useProfile";
+import { useSignOut } from "@/hooks/useAuth";
 
 export const ProfileDropdown = () => {
-  const user = {
-    name: "Shubham Matoliya",
-    isAdmin: true,
+  const { data: profile } = useProfile();
+  const signOut = useSignOut();
+
+  const handleLogout = () => {
+    signOut.mutate();
   };
 
   return (
@@ -18,8 +22,10 @@ export const ProfileDropdown = () => {
       <DropdownMenuTrigger asChild>
         <button className="flex items-center space-x-2 hover:bg-[var(--color-primary)] border hover:text-white rounded-full p-1 relative">
           <User className="size-5" />
-          <span className="font-normal">{user.name.split(" ")[0]}</span>
-          {user.isAdmin && (
+          <span className="font-normal">
+            {profile?.full_name?.split(" ")[0] || "User"}
+          </span>
+          {profile?.is_admin && (
             <div className="absolute right-0 top-0 w-2 h-2 bg-green-500 rounded-full"></div>
           )}
         </button>
@@ -30,7 +36,7 @@ export const ProfileDropdown = () => {
           <Link to="/profile">
             <User className="w-4 h-4" />
             <span>Profile</span>
-            {user.isAdmin && (
+            {profile?.is_admin && (
               <span className="ml-auto text-xs text-green-500 ">Admin</span>
             )}
           </Link>
@@ -40,7 +46,7 @@ export const ProfileDropdown = () => {
           asChild
           className="flex items-center space-x-2 text-red-600"
         >
-          <div>
+          <div onClick={handleLogout}>
             <LogOut className="w-4 h-4" />
             <span>Logout</span>
           </div>

@@ -4,6 +4,8 @@ import type { User, Session } from "@supabase/supabase-js";
 export interface SignUpCredentials {
   email: string;
   password: string;
+  full_name?: string;
+  is_admin?: boolean;
 }
 
 export interface SignInCredentials {

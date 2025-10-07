@@ -3,10 +3,14 @@ import { Menu, X, Settings, User } from "lucide-react";
 import Logo from "./Logo";
 import { Link } from "@tanstack/react-router";
 import { ProfileDropdown } from "./ProfileDropdown";
+import { useAuth } from "@/hooks/useAuth";
+import { useProfile } from "@/hooks/useProfile";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
-
+  const { isAuthenticated } = useAuth();
+  const { data: profile } = useProfile();
+  console.log(profile);
   return (
     <header
       className={`w-full md:h-[var(--header-height)] py-1 bg-white shadow-sm  relative`}
@@ -17,12 +21,14 @@ export default function Navbar() {
           <Logo />
           {/* Desktop Menu */}
           <div className="hidden md:flex items-center gap-6">
-            <button className="p-2 hover:bg-gray-100 rounded-full">
-              <Link to="/users">
-                <Settings size={22} />
-              </Link>
-            </button>
-            <ProfileDropdown />
+            {isAuthenticated && profile?.is_admin && (
+              <button className="p-2 hover:bg-gray-100 rounded-full">
+                <Link to="/users">
+                  <Settings size={22} />
+                </Link>
+              </button>
+            )}
+            {isAuthenticated && <ProfileDropdown />}
           </div>
 
           {/* Mobile Hamburger */}

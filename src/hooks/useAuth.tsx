@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import type { Session } from "@supabase/supabase-js";
 import { toast } from "sonner";
 import { CheckCircle2, CircleX } from "lucide-react";
+import { useNavigate } from "@tanstack/react-router";
 
 export const useAuth = () => {
   const [session, setSession] = useState<Session | null>(null);
@@ -29,6 +30,7 @@ export const useAuth = () => {
   }, []);
 
   return {
+    userId: session?.user?.id,
     session,
     user: session?.user ?? null,
     isAuthenticated: !!session,
@@ -41,23 +43,38 @@ export const useSignUp = () => {
     mutationFn: (credentials: SignUpCredentials) => authApi.signUp(credentials),
     onSuccess: (data) => {
       if (data.error) {
-        toast.error("Sign up failed", {
-          icon: <CircleX />,
-          description: data.error.message,
-        });
+        toast.error(
+          <p className="text-gray-700 text-md font-semibold">Sign up failed</p>,
+          {
+            icon: <CircleX className="size-5" stroke="red" strokeWidth={2} />,
+            description: <p className="text-gray-600 ">{data.error.message}</p>,
+          }
+        );
       } else {
-        toast.success("Sign up successful", {
-          icon: <CheckCircle2 />,
-          description: "Please check email to verify your account.",
-        });
+        toast.success(
+          <p className="text-gray-700 text-md font-semibold">
+            Sign in successful
+          </p>,
+          {
+            icon: (
+              <CheckCircle2 className="size-5" stroke="green" strokeWidth={2} />
+            ),
+            description: (
+              <p className="text-gray-600 ">You have successfully signed in.</p>
+            ),
+          }
+        );
         queryClient.invalidateQueries({ queryKey: ["auth"] });
       }
     },
     onError: (error: Error) => {
-      toast.error("Sign up failed", {
-        icon: <CircleX />,
-        description: error.message,
-      });
+      toast.error(
+        <p className="text-gray-700 text-md font-semibold">Sign up failed</p>,
+        {
+          icon: <CircleX className="size-5" stroke="red" strokeWidth={2} />,
+          description: <p className="text-gray-600 ">{error.message}</p>,
+        }
+      );
     },
   });
 };
@@ -69,17 +86,27 @@ export const useSignIn = () => {
     mutationFn: (credentials: SignInCredentials) => authApi.signIn(credentials),
     onSuccess: (data) => {
       if (data.error) {
-        toast.error("Sign in failed", {
-          icon: <CircleX className="size-5" />,
-          description: <p className="text-gray-600 ">{data.error.message}</p>,
-          className: "flex gap-3",
-          duration: 5000,
-        });
+        toast.error(
+          <p className="text-gray-700 text-md font-semibold">Sign in failed</p>,
+          {
+            icon: <CircleX className="size-5" stroke="red" strokeWidth={2} />,
+            description: <p className="text-gray-600 ">{data.error.message}</p>,
+          }
+        );
       } else {
-        toast.success("Sign in successful", {
-          icon: <CheckCircle2 />,
-          description: "You have successfully signed in.",
-        });
+        toast.success(
+          <p className="text-gray-700 text-md font-semibold">
+            Sign in successful
+          </p>,
+          {
+            icon: (
+              <CheckCircle2 className="size-5" stroke="green" strokeWidth={2} />
+            ),
+            description: (
+              <p className="text-gray-600 ">You have successfully signed in.</p>
+            ),
+          }
+        );
         queryClient.invalidateQueries({ queryKey: ["auth"] });
       }
     },
@@ -87,6 +114,7 @@ export const useSignIn = () => {
       toast.error("Sign in failed", {
         icon: <CircleX />,
         description: <p className="text-gray-600">{error.message}</p>,
+        className: "flex gap-3",
       });
     },
   });
@@ -94,21 +122,39 @@ export const useSignIn = () => {
 
 export const useSignOut = () => {
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   return useMutation({
     mutationFn: () => authApi.signOut(),
     onSuccess: (data) => {
       if (data.error) {
-        toast.error("Sign out failed", {
-          icon: <CircleX />,
-          description: data.error.message,
-        });
+        toast.error(
+          <p className="text-gray-700 text-md font-semibold">
+            Sign out failed
+          </p>,
+          {
+            icon: <CircleX className="size-5" stroke="red" strokeWidth={2} />,
+            description: <p className="text-gray-600 ">{data.error.message}</p>,
+          }
+        );
       } else {
-        toast.success("Sign out successful", {
-          icon: <CheckCircle2 />,
-          description: "You have been successfully signed out.",
-        });
+        toast.success(
+          <p className="text-gray-700 text-md font-semibold">
+            Sign out successful
+          </p>,
+          {
+            icon: (
+              <CheckCircle2 className="size-5" stroke="green" strokeWidth={2} />
+            ),
+            description: (
+              <p className="text-gray-600 ">
+                You have successfully signed out.
+              </p>
+            ),
+          }
+        );
         queryClient.invalidateQueries({ queryKey: ["auth"] });
+        navigate({ to: "/" });
       }
     },
     onError: (error: Error) => {
@@ -122,7 +168,7 @@ export const useSignOut = () => {
 
 // Query hook for getting current user
 export const useCurrentUser = () => {
-  return useQuery({
+  const query = useQuery({
     queryKey: ["auth", "user"],
     queryFn: async () => {
       const { user, error } = await authApi.getUser();
@@ -131,4 +177,10 @@ export const useCurrentUser = () => {
     },
     retry: false,
   });
+  return {
+    ...query,
+    user: query.data,
+    isAuthenticated: query.data?.role === "authenticated",
+    userId: query.data?.id,
+  };
 };

@@ -14,7 +14,15 @@ export const researchSchema = z
     seedKeywords: z.custom<File[]>().optional(),
     seoThemes: z.custom<File[]>().optional(),
     existingKeywords: z.custom<File[]>().optional(),
-    competitor: z.string().optional(),
+    competitor: z
+      .array(
+        z.object({
+          id: z.string(),
+          name: z.string(),
+          url: z.url().optional(),
+        })
+      )
+      .optional(),
   })
   .superRefine((data, ctx) => {
     if (
