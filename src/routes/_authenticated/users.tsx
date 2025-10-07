@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Loader, MoveLeft, Trash2 } from "lucide-react";
+import { Loader, MoveLeft } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import {
   Table,
@@ -12,7 +12,9 @@ import {
 } from "@/components/ui/table";
 import AddUserDialog from "@/components/dialogs/AddUserDialog";
 import { Badge } from "@/components/ui/badge";
-import { useDeleteProfile, useGetAllProfiles } from "@/hooks/useProfile";
+import { useGetAllProfiles } from "@/hooks/useProfile";
+
+import { AlertDialogDeleteUser } from "@/components/AlertDialogDeleteUser";
 
 export const Route = createFileRoute("/_authenticated/users")({
   component: RouteComponent,
@@ -20,13 +22,12 @@ export const Route = createFileRoute("/_authenticated/users")({
 
 function RouteComponent() {
   const { profiles, isPending } = useGetAllProfiles();
-  const { mutate: deleteProfile } = useDeleteProfile();
 
   return (
     <div className="h-full max-h-[var(--main-height)] overflow-y-auto pb-4">
       <div className="flex flex-col">
-        <div className=" mt-4 ml-4">
-          <Link to="/seo" className="flex items-center gap-2">
+        <div className=" mt-4 ml-4  ">
+          <Link to="/seo" className="flex items-center w-max gap-2">
             <MoveLeft /> Back to DashBoard
           </Link>
         </div>
@@ -72,12 +73,12 @@ function RouteComponent() {
                           <Badge
                             variant="outline"
                             className={
-                              user.isActive
+                              user.is_active
                                 ? "bg-green-200 border-green-600"
                                 : "bg-gray-200 border-gray-500"
                             }
                           >
-                            {user.isActive ? "Active" : "Inactive"}
+                            {user.is_active ? "Active" : "Inactive"}
                           </Badge>
                         </TableCell>
                         <TableCell className="font-normal">
@@ -86,11 +87,7 @@ function RouteComponent() {
                           </Badge>
                         </TableCell>
                         <TableCell>
-                          <Trash2
-                            size={22}
-                            className="text-red-600"
-                            onClick={() => deleteProfile(user.id)}
-                          />
+                          <AlertDialogDeleteUser id={user.id} />
                         </TableCell>
                       </TableRow>
                     );

@@ -12,16 +12,20 @@ import { useNavigate } from "@tanstack/react-router";
 
 export const useAuth = () => {
   const [session, setSession] = useState<Session | null>(null);
+  const [loading, setLoading] = useState(true);
+
   // Set up auth state listener
   useEffect(() => {
-    // Subscribe to auth changes
-    const subscription = authApi.onAuthStateChange((session) => {
-      setSession(session);
-    });
-
     // Get initial session
     authApi.getSession().then(({ session }) => {
       setSession(session);
+      setLoading(false);
+    });
+
+    // Subscribe to auth changes
+    const subscription = authApi.onAuthStateChange((session) => {
+      setSession(session);
+      setLoading(false);
     });
 
     return () => {
@@ -34,6 +38,7 @@ export const useAuth = () => {
     session,
     user: session?.user ?? null,
     isAuthenticated: !!session,
+    loading,
   };
 };
 
@@ -123,7 +128,6 @@ export const useSignIn = () => {
 export const useSignOut = () => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
-
   return useMutation({
     mutationFn: () => authApi.signOut(),
     onSuccess: (data) => {

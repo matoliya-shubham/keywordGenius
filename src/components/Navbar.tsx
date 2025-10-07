@@ -10,7 +10,7 @@ export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const { isAuthenticated } = useAuth();
   const { data: profile } = useProfile();
-  console.log(profile);
+
   return (
     <header
       className={`w-full md:h-[var(--header-height)] py-1 bg-white shadow-sm  relative`}

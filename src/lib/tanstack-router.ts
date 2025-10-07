@@ -9,6 +9,7 @@ export type AuthContextType = {
 };
 export const router = createRouter({
   routeTree,
+  scrollRestoration: true,
   context: { auth: undefined as unknown as AuthContextType },
 });
 

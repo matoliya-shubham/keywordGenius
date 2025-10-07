@@ -8,9 +8,10 @@ import { LogOut, User } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { useProfile } from "@/hooks/useProfile";
 import { useSignOut } from "@/hooks/useAuth";
+import { Spinner } from "./Spinner";
 
 export const ProfileDropdown = () => {
-  const { data: profile } = useProfile();
+  const { data: profile, isPending } = useProfile();
   const signOut = useSignOut();
 
   const handleLogout = () => {
@@ -21,12 +22,18 @@ export const ProfileDropdown = () => {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <button className="flex items-center space-x-2 hover:bg-[var(--color-primary)] border hover:text-white rounded-full p-1 relative">
-          <User className="size-5" />
-          <span className="font-normal">
-            {profile?.full_name?.split(" ")[0] || "User"}
-          </span>
-          {profile?.is_admin && (
-            <div className="absolute right-0 top-0 w-2 h-2 bg-green-500 rounded-full"></div>
+          {isPending ? (
+            <Spinner size="sm" />
+          ) : (
+            <>
+              <User className="size-5" />
+              <span className="font-normal">
+                {profile?.full_name?.split(" ")[0] || "User"}
+              </span>
+              {profile?.is_admin && (
+                <div className="absolute right-0 top-0 w-2 h-2 bg-green-500 rounded-full"></div>
+              )}
+            </>
           )}
         </button>
       </DropdownMenuTrigger>

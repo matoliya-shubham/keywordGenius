@@ -7,7 +7,11 @@ import {
   FormMessage,
   FormControl,
 } from "@/components/ui/form";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import {
+  createFileRoute,
+  useNavigate,
+  useSearch,
+} from "@tanstack/react-router";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -19,6 +23,9 @@ import { useSignIn } from "@/hooks/useAuth";
 import { useCurrentUser } from "@/hooks/useAuth";
 
 export const Route = createFileRoute("/")({
+  validateSearch: z.object({
+    redirectTo: z.string().optional().catch("/"),
+  }),
   component: RouteComponent,
 });
 
@@ -34,9 +41,10 @@ function RouteComponent() {
   const signIn = useSignIn();
   const navigate = useNavigate();
   const { isAuthenticated } = useCurrentUser();
+  const { redirectTo } = useSearch({ from: "/" });
 
   if (isAuthenticated) {
-    navigate({ to: "/seo/research" });
+    navigate({ to: redirectTo || "/seo/research" });
   }
 
   const form = useForm<FormValues>({
@@ -53,7 +61,6 @@ function RouteComponent() {
         email: data.email,
         password: data.password,
       });
-      navigate({ to: "/seo/research" });
     } catch (err) {
       console.error(err);
     }

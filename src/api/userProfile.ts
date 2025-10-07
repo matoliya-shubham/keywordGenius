@@ -1,6 +1,15 @@
 import { supabase } from "@/supabase-client";
 import type { User } from "@supabase/supabase-js";
 
+type Profile = {
+  id: string;
+  email: string;
+  full_name: string;
+  avatar: string;
+  is_admin: boolean;
+  is_active: boolean;
+};
+
 export async function getProfile() {
   const {
     data: { user },
@@ -16,7 +25,7 @@ export async function getProfile() {
     .single();
 
   if (error) throw new Error(error.message);
-  return profile;
+  return profile as Profile;
 }
 
 export async function updateProfile(profile: User) {
@@ -34,10 +43,10 @@ export async function updateProfile(profile: User) {
     .single();
 
   if (error) throw new Error(error.message);
-  return profileData;
+  return profileData as Profile;
 }
 
-export async function deleteProfile() {
+export async function deleteProfile(id: string) {
   const {
     data: { user },
     error: userError,
@@ -45,7 +54,7 @@ export async function deleteProfile() {
 
   if (userError || !user) throw new Error("User not logged in");
 
-  const { error } = await supabase.from("profiles").delete().eq("id", user.id);
+  const { error } = await supabase.from("profiles").delete().eq("id", id);
 
   if (error) throw new Error(error.message);
 }
@@ -54,5 +63,5 @@ export async function getAllProfiles() {
   const { data: profiles, error } = await supabase.from("profiles").select("*");
 
   if (error) throw new Error(error.message);
-  return profiles;
+  return profiles as Profile[];
 }

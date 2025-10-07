@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { X, Plus } from "lucide-react";
+import { X, Plus, Link } from "lucide-react";
 
 export type Competitor = {
   id: string;
@@ -21,7 +21,7 @@ type Props = {
 };
 
 export function CompetitorSelector({ onChange, value }: Props) {
-  const [competitors, setCompetitors] = useState<Competitor[]>(value);
+  const [competitors, setCompetitors] = useState<Competitor[]>(value || []);
   const [name, setName] = useState("");
   const [url, setUrl] = useState("");
   const [open, setOpen] = useState(false);
@@ -61,6 +61,7 @@ export function CompetitorSelector({ onChange, value }: Props) {
                 handleRemove(c.id);
               }}
             >
+              {c.url && <Link className="h-3 w-3" />}
               {c.name}
               <X className="h-3 w-3 cursor-pointer" />
             </Badge>
@@ -83,7 +84,7 @@ export function CompetitorSelector({ onChange, value }: Props) {
           </Button>
         </PopoverTrigger>
 
-        <PopoverContent className="w-full p-4">
+        <PopoverContent className="w-[25rem] p-4">
           <form onSubmit={handleSubmit} className="space-y-3">
             <div className="space-y-1">
               <Label htmlFor="competitor-name">Name *</Label>

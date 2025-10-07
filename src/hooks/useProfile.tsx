@@ -10,12 +10,12 @@ import { toast } from "sonner";
 import { CheckCircle2, CircleX } from "lucide-react";
 
 export const useProfile = () => {
-  const { data, error } = useQuery({
+  const { data, error, isPending } = useQuery({
     queryKey: ["profile"],
     queryFn: async () => getProfile(),
   });
 
-  return { data, error };
+  return { data, error, isPending };
 };
 
 export const useUpdateProfile = () => {
@@ -55,7 +55,7 @@ export const useDeleteProfile = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: () => deleteProfile(),
+    mutationFn: (id: string) => deleteProfile(id),
     onSuccess: () => {
       toast.success(
         <p className="text-gray-700 text-md font-semibold">
