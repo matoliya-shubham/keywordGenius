@@ -27,7 +27,7 @@ function RouteComponent() {
   return (
     <div className="h-full max-h-[var(--main-height)] overflow-y-auto pb-4">
       <div className="flex flex-col">
-        <h1 className="text-2xl font-bold mt-4 ml-4">
+        <h1 className="text-4xl font-bold mt-4 ml-4">
           Keyword Research Wizard
         </h1>
         <p className="text-gray-500 ml-4 ">
@@ -35,16 +35,18 @@ function RouteComponent() {
         </p>
       </div>
       <div className="flex flex-col  justify-baseline items-center h-max gap-2 relative mt-6">
-        <div className="sticky top-0 grid grid-cols-2 gap-2 p-2 w-full md:w-2/3 mt-4 bg-white shadow-sm rounded-sm ">
+        <div className="sticky top-0 grid grid-cols-2 gap-1 p-1 w-full md:w-2/3 mt-4 bg-white shadow-sm rounded-sm ">
           <Button
             variant={isActive("/seo/research") ? "default" : "outline"}
             asChild
+            className="rounded-sm"
           >
             <Link to="/seo/research">Research</Link>
           </Button>
           <Button
             variant={isActive("/seo/progress") ? "default" : "outline"}
             asChild
+            className="rounded-sm"
           >
             <Link to="/seo/progress">Progress</Link>
           </Button>

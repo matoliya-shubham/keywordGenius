@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 export default function Logo({ className }: { className?: string }) {
   return (
     <Link to="/" className="flex items-center ">
-      <PureTechLogo className={cn("size-24", className)} />
+      <PureTechLogo className={cn("size-20", className)} />
     </Link>
   );
 }

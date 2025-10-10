@@ -7,7 +7,7 @@
 }
 
 :root {
-  --header-height: 104px;
+  --header-height: 106px;
   --footer-height: 36px;
   --main-height: calc(100vh - var(--header-height) - var(--footer-height));
   --logo-primary-color: #3bb1a4;

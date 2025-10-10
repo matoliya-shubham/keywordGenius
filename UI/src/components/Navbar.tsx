@@ -13,10 +13,10 @@ export default function Navbar() {
 
   return (
     <header
-      className={`w-full md:h-[var(--header-height)] py-1 bg-white shadow-sm  relative`}
+      className={`w-screen bg-white md:h-[var(--header-height)] flex items-center  shadow-sm  relative`}
     >
-      <nav className="max-w-8xl mx-auto px-4 ">
-        <div className="flex items-center justify-between">
+      <nav className="w-full mx-auto p-3 px-4">
+        <div className="flex items-center w-full justify-between my-auto">
           {/* Logo */}
           <Logo />
           {/* Desktop Menu */}

@@ -18,11 +18,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
+import { UnsavedChangesDialog } from "@/components/UnsavedChangesDialog";
 import { ResearchPurpose } from "@/constants/constant";
 import { researchSchema, type FormValues } from "@/schema/researchSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useBlocker } from "@tanstack/react-router";
 import { FileText, Upload } from "lucide-react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 
 export const Route = createFileRoute("/_authenticated/seo/research")({
@@ -42,6 +44,16 @@ function RouteComponent() {
       competitor: undefined,
     },
   });
+  const [isFormDirty, setIsFormDirty] = useState(false);
+
+  const { proceed, reset, status } = useBlocker({
+    shouldBlockFn: () => isFormDirty,
+    withResolver: true,
+  });
+
+  useEffect(() => {
+    setIsFormDirty(form.formState.isDirty);
+  }, [form.formState.isDirty]);
 
   const onSubmit = async () => {
     try {
@@ -61,6 +73,9 @@ function RouteComponent() {
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") e.preventDefault();
+          }}
           className="space-y-6 p-4 px-6"
         >
           <FormField
@@ -191,7 +206,7 @@ function RouteComponent() {
               </FormItem>
             )}
           />
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 gap-3 justify-baseline">
             <FormField
               control={form.control}
               name="seedKeywords"
@@ -288,6 +303,13 @@ function RouteComponent() {
           </Button>
         </form>
       </Form>
+      {status === "blocked" && (
+        <UnsavedChangesDialog
+          open={true}
+          onConfirm={proceed}
+          onCancel={reset}
+        />
+      )}
     </div>
   );
 }

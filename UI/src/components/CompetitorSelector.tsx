@@ -23,6 +23,7 @@ type Props = {
 export function CompetitorSelector({ onChange, value }: Props) {
   const [competitors, setCompetitors] = useState<Competitor[]>(value || []);
   const [name, setName] = useState("");
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   const [url, setUrl] = useState("");
   const [open, setOpen] = useState(false);
 
@@ -30,22 +31,50 @@ export function CompetitorSelector({ onChange, value }: Props) {
     e.preventDefault();
     e.stopPropagation();
     if (!name.trim()) return; // required field
+    if (selectedId) {
+      const updatedCompetitors = competitors.map((c) => {
+        if (c.id === selectedId) {
+          return {
+            ...c,
+            name: name.trim(),
+            url: url.trim() || undefined,
+          };
+        }
+        return c;
+      });
+      setCompetitors(updatedCompetitors);
+      onChange(updatedCompetitors);
+      setSelectedId(null);
+    } else {
+      const newCompetitor: Competitor = {
+        id: crypto.randomUUID(),
+        name: name.trim(),
+        url: url.trim() || undefined,
+      };
 
-    const newCompetitor: Competitor = {
-      id: crypto.randomUUID(),
-      name: name.trim(),
-      url: url.trim() || undefined,
-    };
-
-    setCompetitors((prev) => [...prev, newCompetitor]);
-    onChange(competitors);
+      setCompetitors((prev) => [...prev, newCompetitor]);
+      onChange([...competitors, newCompetitor]);
+    }
     setName("");
     setUrl("");
     setOpen(false);
   };
 
+  const handleEdit = (id: string) => {
+    setOpen((prev) => !prev);
+    const competitor = competitors.find((c) => c.id === id);
+    if (competitor) {
+      setName(competitor.name);
+      setUrl(competitor.url || "");
+      setSelectedId(id);
+    }
+  };
+
   const handleRemove = (id: string) => {
-    setCompetitors((prev) => prev.filter((c) => c.id !== id));
+    let newValues = [...competitors];
+    newValues = newValues.filter((c) => c.id !== id);
+    setCompetitors(newValues);
+    onChange(newValues);
   };
 
   return (
@@ -55,15 +84,21 @@ export function CompetitorSelector({ onChange, value }: Props) {
           competitors.map((c) => (
             <Badge
               key={c.id}
-              className="flex items-center gap-1 hover:bg-red-500 cursor-pointer"
-              onClick={(e) => {
-                e.stopPropagation();
-                handleRemove(c.id);
-              }}
+              className="flex items-center gap-1"
+              onClick={() => handleEdit(c.id)}
             >
               {c.url && <Link className="h-3 w-3" />}
               {c.name}
-              <X className="h-3 w-3 cursor-pointer" />
+
+              <button
+                className="group cursor-pointer rounded-full"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleRemove(c.id);
+                }}
+              >
+                <X className="h-3 w-3 group-hover:text-red-500" />
+              </button>
             </Badge>
           ))
         ) : (
@@ -85,7 +120,13 @@ export function CompetitorSelector({ onChange, value }: Props) {
         </PopoverTrigger>
 
         <PopoverContent className="w-[25rem] p-4">
-          <form onSubmit={handleSubmit} className="space-y-3">
+          <form
+            onSubmit={handleSubmit}
+            onKeyDown={(e) => {
+              e.stopPropagation();
+            }}
+            className="space-y-3"
+          >
             <div className="space-y-1">
               <Label htmlFor="competitor-name">Name *</Label>
               <Input

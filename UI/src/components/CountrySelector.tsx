@@ -5,7 +5,6 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { X, ChevronDown } from "lucide-react";
@@ -80,44 +79,47 @@ export function CountrySelector({ onChange, value: countries }: Props) {
         allCountries.filter((c) => c.name.toLowerCase().includes(query))
       );
     }
-    // return () => {
-    //   onChange(selected);
-    // };
   }, [search, allCountries, onChange, selected]);
 
   const toggleSelect = (country: string) => {
-    setSelected((prev) =>
-      prev.includes(country)
-        ? prev.filter((c) => c !== country)
-        : [...prev, country]
-    );
+    let newValues = [...selected];
+    if (selected.includes(country)) {
+      newValues = newValues.filter((c) => c !== country);
+    } else {
+      newValues.push(country);
+    }
+    setSelected(newValues);
+    onChange(newValues);
   };
 
   const removeSelected = (country: string) => {
-    console.log("triggered");
-    setSelected((prev) => prev.filter((c) => c !== country));
+    let newValues = [...selected];
+    newValues = newValues.filter((c) => c !== country);
+    setSelected(newValues);
+    onChange(newValues);
   };
 
   return (
     <Popover onOpenChange={(open) => open && fetchCountries()}>
       <PopoverTrigger asChild className="w-full">
-        <Button
-          variant="outline"
-          className="flex flex-wrap items-center gap-2 min-w-[250px] justify-between"
-        >
+        <div className="border rounded-md p-2 flex flex-wrap items-center gap-2 min-w-[250px] justify-between">
           <div className="flex flex-wrap gap-1">
             {selected.length > 0 ? (
               selected.map((c) => (
                 <Badge
                   key={c}
-                  className="flex items-center gap-1 cursor-pointer hover:bg-red-500"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    removeSelected(c);
-                  }}
+                  className="flex items-center gap-1 cursor-pointer "
                 >
                   {c}
-                  <X className="h-3 w-3 cursor-pointer" />
+                  <button
+                    className="group cursor-pointer rounded-full"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      removeSelected(c);
+                    }}
+                  >
+                    <X className="h-3 w-3 group-hover:text-red-500" />
+                  </button>
                 </Badge>
               ))
             ) : (
@@ -127,7 +129,7 @@ export function CountrySelector({ onChange, value: countries }: Props) {
             )}
           </div>
           <ChevronDown className="h-4 w-4 opacity-60" />
-        </Button>
+        </div>
       </PopoverTrigger>
 
       <PopoverContent className="p-3 w-full" align="start">
@@ -144,7 +146,7 @@ export function CountrySelector({ onChange, value: countries }: Props) {
             <ScrollArea className="h-[200px]">
               <div className="space-y-1">
                 {filtered.map((country) => (
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2" key={country?.name}>
                     <img
                       src={country?.flag}
                       alt={country?.alt}
@@ -152,7 +154,6 @@ export function CountrySelector({ onChange, value: countries }: Props) {
                       height={8}
                     />
                     <div
-                      key={country?.name}
                       onClick={() => toggleSelect(country?.name)}
                       className={`cursor-pointer px-2 py-1 rounded-md text-sm hover:bg-accent ${
                         selected.includes(country?.name)

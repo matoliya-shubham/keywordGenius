@@ -11,6 +11,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { formatDateTime } from "@/lib/utils";
 import { createFileRoute } from "@tanstack/react-router";
 import { Download } from "lucide-react";
 
@@ -55,7 +56,7 @@ function RouteComponent() {
   return (
     <div>
       <h2 className="text-2xl font-semibold text-gray-800 p-4 px-6">
-        Research Setup
+        Progress Tracker
       </h2>
       <div className="m-2 mx-6 border rounded-md">
         <Table>
@@ -75,7 +76,7 @@ function RouteComponent() {
                   <div className="w-full ml-4">{prog.jobId}</div>
                 </TableCell>
                 <TableCell className="font-normal w-40">
-                  {new Date(prog.createdAt).toLocaleString()}
+                  {formatDateTime(prog.createdAt)}
                 </TableCell>
                 <TableCell className="w-40">
                   <StatusBadge status={prog.status as Status} />
